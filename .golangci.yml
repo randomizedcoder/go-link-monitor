@@ -1,0 +1,32 @@
+version: "2"
+
+run:
+  timeout: 5m
+
+linters:
+  default: standard # errcheck, govet, ineffassign, staticcheck, unused
+  enable:
+    - revive
+    - misspell
+    - unconvert
+    - gocritic
+    - prealloc
+    - errorlint
+    - bodyclose
+  settings:
+    errcheck:
+      # Close on a file/closer is routinely fire-and-forget.
+      exclude-functions:
+        - (*os.File).Close
+        - (io.Closer).Close
+  exclusions:
+    generated: lax
+    rules:
+      # Test helpers deliberately ignore some errors and reuse allocations.
+      - path: _test\.go
+        linters:
+          - errcheck
+          - gosec
+          - prealloc
+          - bodyclose
+          - revive # test fakes have intentionally-unused signature params
